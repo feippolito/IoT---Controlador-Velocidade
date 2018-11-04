@@ -207,7 +207,7 @@ def ubidots():                      #Ubidots GET e POST - Thread 3
     global uSentido, uLiga, uMotorSelec, uMotorPWM, uMotorVel, uInterface, dutyC
 
     uInterface = get_var(DEVICE_LABEL,'controle')
-    if uInterface == 1:                                                      #Controle web selecionado
+    if uInterface == 1:                                                     #Controle web selecionado
         uLiga = get_var(DEVICE_LABEL,'liga')                                #Coleta os valores da web
         uSentido = get_var(DEVICE_LABEL,'sentido')
         uMotorSelec = get_var(DEVICE_LABEL,'controlemotor')
@@ -307,6 +307,7 @@ def do_main():
                 if uMotorSelec == 1:
                     text = "Velocidade"
                     Element_2.can_meter.configure(background='#4ed885')
+                    Element_4.button1.configure(bg="#4ed885")
                     Element_4.button2.configure(bg=Element_4.orig_color)
                     Element_4.button3.configure(bg=Element_4.orig_color)
                     Element_4.button4.configure(bg=Element_4.orig_color)
@@ -360,7 +361,7 @@ def do_main():
                 uLiga = 1
             else:
                 setpoint = uMotorVel
-                Analog_Meter.Read(Element_2, setpoint)
+                Analog_Meter.Read(Element_2,round(setpoint,2))
 
             Analog_Meter.Read(Element_3, 0)                         #Zera o medidor do sensor
             Analog_Meter.ChangeText(Element_3, "Desativado")        #Adiciona texto de desativado do medidor de sensor 
