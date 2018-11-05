@@ -96,7 +96,7 @@ def post_request(payload):          #POST
     print("[INFO] request made properly, your device is updated")
     return True
 
-def sentido(self):                                  #Função altera a interface grafica dependendo do sentido
+def sentido(self):                  #Função altera a interface grafica dependendo do sentido
     if self.sentido == 0:                           #Verifica o sentido
         self.button6.configure(bg="#4ed885")        #Altera acor dos botões
         self.button5.configure(bg=self.orig_color)
@@ -207,33 +207,33 @@ def ubidots():                      #Ubidots GET e POST - Thread 3
     global uSentido, uLiga, uMotorSelec, uMotorPWM, uMotorVel, uInterface, dutyC
 
     uInterface = get_var(DEVICE_LABEL,'controle')
-    if uInterface == 1:                                                     #Controle web selecionado
-        uLiga = get_var(DEVICE_LABEL,'liga')                                #Coleta os valores da web
+    if uInterface == 1:                              #Controle web selecionado
+        uLiga = get_var(DEVICE_LABEL,'liga')         #Coleta os valores da web
         uSentido = get_var(DEVICE_LABEL,'sentido')
         uMotorSelec = get_var(DEVICE_LABEL,'controlemotor')
         uMotorPWM = get_var(DEVICE_LABEL,'motorpwm')
         uMotorVel = get_var(DEVICE_LABEL,'motorvel')
         if uLiga == 0:
-            payload = {"motorpwm": 0, "motorvel": 0}                        #Atualiza o pwm e velocidade
+            payload = {"motorpwm": 0, "motorvel": 0} #Atualiza o pwm e velocidade
             post_request(payload)
         else:
             if uMotorSelec == 0:
-                payload = {"motorvel": v}                                   #Atualiza a velocidade
+                payload = {"motorvel": v}            #Atualiza a velocidade
                 post_request(payload)
             else:
-                payload = {"motorpwm": dutyC}                               #atualiza o pwm
+                payload = {"motorpwm": dutyC}        #atualiza o pwm
                 post_request(payload)
 
-    if uInterface == 0:                                                     #Atualiza todos as variaveis
+    if uInterface == 0:                 #Atualiza todos as variaveis
         payload = build_payload("motorpwm", dutyC, "motorvel", v, "liga", uLiga, "sentido", uSentido, "controlemotor", uMotorSelec)
         post_request(payload)
 
 def do_main():
     global uSentido, uLiga, uMotorSelec, uMotorPWM, uMotorVel, uInterface, dutyC        #Variaveis para comunicação web
 
-    root = Tk()             #Define tela root
+    root = Tk()                         #Define tela root
 
-    root.overrideredirect(True)        #Programa inicializa em fullscreen
+    root.overrideredirect(True)         #Programa inicializa em fullscreen
     root.overrideredirect(False)
     root.attributes('-fullscreen',True)
 
@@ -279,17 +279,17 @@ def do_main():
     #Adiciona um texto para o medidor de velocidade
     velTXT = Element_2.can_meter.create_text(Element_2.side/2, Element_2.origy+Element_2.R*1.3,text=" ")
 
-    while True:                     #Main loop
-        if uInterface == 0:         #Ativia os botões
+    while True:                                         #Main loop
+        if uInterface == 0:                             #Ativia os botões
             Element_4.button1['state'] = 'normal'
             Element_4.button2['state'] = 'normal'
             Element_4.button3['state'] = 'normal'
             Element_4.button4['state'] = 'normal'
             Element_4.button5['state'] = 'normal'
             Element_4.button6['state'] = 'normal'
-            text = Button_Class.GetText(Element_4)   #Olha qual botao foi selecionado na interface de botoes (PWM/Velocidade/Sensor)
+            text = Button_Class.GetText(Element_4)      #Olha qual botao foi selecionado na interface de botoes (PWM/Velocidade/Sensor)
             uSentido = Element_4.sentido
-        else:                       #Desativa os botões para a interface web
+        else:                                           #Desativa os botões para a interface web
             Element_4.button1['state'] = 'disabled'
             Element_4.button2['state'] = 'disabled'
             Element_4.button3['state'] = 'disabled'
@@ -350,12 +350,12 @@ def do_main():
             Analog_Meter.Read(Element_2,round(v,2))                 #Atualiza a velocidade medida 
             
 
-        elif text == "Velocidade":                          #Quando Velocidade selecionado
+        elif text == "Velocidade":                                  #Quando Velocidade selecionado
             sentido(Element_4)
-            Analog_Meter.delete_entry(Element_1)            #Desativa o input nos outros medidores
+            Analog_Meter.delete_entry(Element_1)                    #Desativa o input nos outros medidores
             Analog_Meter.delete_entry(Element_3)
             if uInterface == 0:
-                Analog_Meter.enable_entry(Element_2)            #Ativa o input no medidor Velocidade selecionado
+                Analog_Meter.enable_entry(Element_2)                #Ativa o input no medidor Velocidade selecionado
                 setpoint = Element_2.value
                 uMotorSelec = 1
                 uLiga = 1
@@ -367,7 +367,7 @@ def do_main():
             Analog_Meter.ChangeText(Element_3, "Desativado")        #Adiciona texto de desativado do medidor de sensor 
             Element_2.can_meter.itemconfigure(velTXT, text="Velocidade medida: {} rpm".format(round(v,2)),font=("Purisa", 12))  #Adiciona um texto exibindo a velocidade medida pelo encoder
             
-            dutyC = pid(v,setpoint)                          #Calcula o novo duty cycle usando a função PID
+            dutyC = pid(v,setpoint)                                 #Calcula o novo duty cycle usando a função PID
             ligar(dutyC, Element_4.sentido)                         #Atualiza o sentido de rotação do motor
             Analog_Meter.Read(Element_1, round(dutyC,2))            #Atualiza o PWM para a velocidade calculada pelo PID
             
@@ -427,7 +427,7 @@ if __name__ == "__main__":
     #with open('valores.txt', 'w') as f:
     time.sleep(3)
     while True:
-        t3 = Thread(target=ubidots , args=[])
+        t3 = Thread(target=ubidots , args=[])               #Thread 3 para GET e POST
         t3.start()
         t3.join()
         
