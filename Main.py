@@ -56,15 +56,15 @@ def init():             #Inicia o ubidots com todos os valores em 0
     payload = init_payload("motorpwm", "motorvel", "liga", "sentido", "controlemotor", "controle")
     post_request(payload)
 
-def init_payload(variable_1, variable_2, variable_3, variable_4, variable_5,variable_6): #, variable_2, variable_3):
+def init_payload(variable_1, variable_2, variable_3, variable_4, variable_5,variable_6):  #Payload para POST 6 variaveis
     payload = {variable_1: 0,variable_2: 0,variable_3: 0,variable_4: 0,variable_5: 0,variable_6: 0}
     return payload
 
-def build_payload(variable_1, value_1, variable_2, value_2, variable_3, value_3, variable_4, value_4, variable_5,value_5):
+def build_payload(variable_1, value_1, variable_2, value_2, variable_3, value_3, variable_4, value_4, variable_5,value_5):  #Payload para POST 5 variaveis
     payload = {variable_1: value_1,variable_2: value_2,variable_3: value_3,variable_4: value_4,variable_5: value_5} 
     return payload
 
-def get_var(device, variable):
+def get_var(device, variable):      #GET
     try:
         url = "http://things.ubidots.com/"
         url = url + \
@@ -75,7 +75,7 @@ def get_var(device, variable):
     except:
         return get_var(device,variable)         #Recursividade caso erro
 
-def post_request(payload):
+def post_request(payload):          #POST
     # Creates the headers for the HTTP requests
     url = "http://things.ubidots.com"
     url = "{}/api/v1.6/devices/{}".format(url, DEVICE_LABEL)
@@ -96,8 +96,8 @@ def post_request(payload):
     print("[INFO] request made properly, your device is updated")
     return True
 
-def sentido(self):              #Função altera a interface grafica dependendo do sentido
-    if self.sentido == 0:       #Verifica o sentido
+def sentido(self):                                  #Função altera a interface grafica dependendo do sentido
+    if self.sentido == 0:                           #Verifica o sentido
         self.button6.configure(bg="#4ed885")        #Altera acor dos botões
         self.button5.configure(bg=self.orig_color)
     else:
@@ -214,28 +214,28 @@ def ubidots():                      #Ubidots GET e POST - Thread 3
         uMotorPWM = get_var(DEVICE_LABEL,'motorpwm')
         uMotorVel = get_var(DEVICE_LABEL,'motorvel')
         if uLiga == 0:
-            payload = {"motorpwm": 0, "motorvel": 0}
+            payload = {"motorpwm": 0, "motorvel": 0}                        #Atualiza o pwm e velocidade
             post_request(payload)
         else:
             if uMotorSelec == 0:
-                payload = {"motorvel": v}
+                payload = {"motorvel": v}                                   #Atualiza a velocidade
                 post_request(payload)
             else:
-                payload = {"motorpwm": dutyC}
+                payload = {"motorpwm": dutyC}                               #atualiza o pwm
                 post_request(payload)
 
-    if uInterface == 0:
+    if uInterface == 0:                                                     #Atualiza todos as variaveis
         payload = build_payload("motorpwm", dutyC, "motorvel", v, "liga", uLiga, "sentido", uSentido, "controlemotor", uMotorSelec)
         post_request(payload)
 
 def do_main():
-    global uSentido, uLiga, uMotorSelec, uMotorPWM, uMotorVel, uInterface, dutyC
+    global uSentido, uLiga, uMotorSelec, uMotorPWM, uMotorVel, uInterface, dutyC        #Variaveis para comunicação web
 
     root = Tk()             #Define tela root
 
-    #root.overrideredirect(True)        #Programa inicializa em fullscreen
-    #root.overrideredirect(False)
-    #root.attributes('-fullscreen',True)
+    root.overrideredirect(True)        #Programa inicializa em fullscreen
+    root.overrideredirect(False)
+    root.attributes('-fullscreen',True)
 
     #Cria os frames para a chamada da classe AnalogMeter
     frame_1 = Frame()
@@ -280,16 +280,16 @@ def do_main():
     velTXT = Element_2.can_meter.create_text(Element_2.side/2, Element_2.origy+Element_2.R*1.3,text=" ")
 
     while True:                     #Main loop
-        if uInterface == 0:
+        if uInterface == 0:         #Ativia os botões
             Element_4.button1['state'] = 'normal'
             Element_4.button2['state'] = 'normal'
             Element_4.button3['state'] = 'normal'
             Element_4.button4['state'] = 'normal'
             Element_4.button5['state'] = 'normal'
             Element_4.button6['state'] = 'normal'
-            text = Button_Class.GetText(Element_4)        #Olha qual botao foi selecionado na interface de botoes (PWM/Velocidade/Sensor)
+            text = Button_Class.GetText(Element_4)   #Olha qual botao foi selecionado na interface de botoes (PWM/Velocidade/Sensor)
             uSentido = Element_4.sentido
-        else:
+        else:                       #Desativa os botões para a interface web
             Element_4.button1['state'] = 'disabled'
             Element_4.button2['state'] = 'disabled'
             Element_4.button3['state'] = 'disabled'
@@ -300,20 +300,20 @@ def do_main():
             Analog_Meter.delete_entry(Element_2)
             if uLiga == 1:
                 if uSentido == 1:
-                    Element_4.sentido = 1
+                    Element_4.sentido = 1   #Troca o sentido
                 else:
-                    Element_4.sentido = 0
-                
+                    Element_4.sentido = 0   #Troca o sentido
+
                 if uMotorSelec == 1:
                     text = "Velocidade"
-                    Element_2.can_meter.configure(background='#4ed885')
+                    Element_2.can_meter.configure(background='#4ed885') #Atualiza a interface gráfica
                     Element_4.button1.configure(bg="#4ed885")
                     Element_4.button2.configure(bg=Element_4.orig_color)
                     Element_4.button3.configure(bg=Element_4.orig_color)
                     Element_4.button4.configure(bg=Element_4.orig_color)
                 else:
                     text = "PWM"
-                    Element_1.can_meter.configure(background='#4ed885')
+                    Element_1.can_meter.configure(background='#4ed885') #Atualiza a interface gráfica
                     Element_4.button3.configure(bg="#4ed885")
                     Element_4.button2.configure(bg=Element_4.orig_color)
                     Element_4.button1.configure(bg=Element_4.orig_color)
@@ -321,7 +321,7 @@ def do_main():
                 
             else:
                 text = "Desligado" 
-                Element_4.button2.configure(bg=Element_4.orig_color)
+                Element_4.button2.configure(bg=Element_4.orig_color)    #Atualiza a interface gráfica
                 Element_4.button1.configure(bg=Element_4.orig_color)
                 Element_4.button3.configure(bg=Element_4.orig_color)
                 Element_4.button4.configure(bg="#770e0e")
