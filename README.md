@@ -16,5 +16,5 @@ Graphical interface in python to control the velocity and direction of a dc moto
 ## IoT Upade
 
 New implementation where it is possible to control the motor remotlly throught the internet.
-In the interface it is possible to selec local or remote control. Using [ubidots](https://ubidots.com/) platform it is possible performing PULL and GET request to update the motor velocity and direction.
+In the interface it is possible to select local or remote control. Using [ubidots](https://ubidots.com/) platform it is possible performing PULL and GET request to update the motor velocity and direction.
 
